@@ -18,7 +18,7 @@ interface Config {
 }
 
 function validateEnvironment(): Config {
-  const themeDownloadPath = process.env.THEME_DOWNLOAD_PATH;
+  const themeDownloadPath = process.env.THEME_DOWNLOAD_PATH || './themes';
   const storeName = process.env.SHOPIFY_STORE_URL;
   const shopifyThemePassword = process.env.SHOPIFY_THEME_PASSWORD;
   const shopifyStorePassword = process.env.SHOPIFY_STORE_PASSWORD;

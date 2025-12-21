@@ -9,10 +9,11 @@ interface Config {
   SHOPIFY_THEME_PASSWORD: string;
   SHOPIFY_STORE_PASSWORD: string;
   SESSION_ID: string;
-  WEBHOOK_URL: string;
   THEME_PULL_MAX_RETRIES: number;
   THEME_PULL_RETRY_DELAY_SECONDS: number;
   THEME_DUPLICATE_WAIT_SECONDS: number;
+  WEBHOOK_USERNAME: string;
+  WEBHOOK_PASSWORD: string;
 }
 
 function validateEnvironment(): Config {
@@ -21,10 +22,11 @@ function validateEnvironment(): Config {
   const shopifyThemePassword = process.env.SHOPIFY_THEME_PASSWORD;
   const shopifyStorePassword = process.env.SHOPIFY_STORE_PASSWORD;
   const sessionId = process.env.SESSION_ID;
-  const webhookUrl = process.env.WEBHOOK_URL;
   const themePullMaxRetries = process.env.THEME_PULL_MAX_RETRIES;
   const themePullRetryDelaySeconds = process.env.THEME_PULL_RETRY_DELAY_SECONDS;
   const themeDuplicateWaitSeconds = process.env.THEME_DUPLICATE_WAIT_SECONDS;
+  const webhookUsername = process.env.WEBHOOK_USERNAME;
+  const webhookPassword = process.env.WEBHOOK_PASSWORD;
 
   if (!themeDownloadPath) {
     throw new Error('THEME_DOWNLOAD_PATH environment variable is required');
@@ -46,10 +48,6 @@ function validateEnvironment(): Config {
     throw new Error('SESSION_ID environment variable is required');
   }
 
-  if (!webhookUrl) {
-    throw new Error('WEBHOOK_URL environment variable is required');
-  }
-
   if (!themePullMaxRetries) {
     throw new Error('THEME_PULL_MAX_RETRIES environment variable is required');
   }
@@ -62,6 +60,14 @@ function validateEnvironment(): Config {
     throw new Error('THEME_DUPLICATE_WAIT_SECONDS environment variable is required');
   }
 
+  if (!webhookUsername) {
+    throw new Error('WEBHOOK_USERNAME environment variable is required');
+  }
+
+  if (!webhookPassword) {
+    throw new Error('WEBHOOK_PASSWORD environment variable is required');
+  }
+
   return {
     THEME_DOWNLOAD_PATH: themeDownloadPath,
     PORT: parseInt(process.env.PORT || '8000', 10),
@@ -69,10 +75,11 @@ function validateEnvironment(): Config {
     SHOPIFY_THEME_PASSWORD: shopifyThemePassword,
     SHOPIFY_STORE_PASSWORD: shopifyStorePassword,
     SESSION_ID: sessionId,
-    WEBHOOK_URL: webhookUrl,
     THEME_PULL_MAX_RETRIES: parseInt(themePullMaxRetries, 10),
     THEME_PULL_RETRY_DELAY_SECONDS: parseInt(themePullRetryDelaySeconds, 10),
-    THEME_DUPLICATE_WAIT_SECONDS: parseInt(themeDuplicateWaitSeconds, 10)
+    THEME_DUPLICATE_WAIT_SECONDS: parseInt(themeDuplicateWaitSeconds, 10),
+    WEBHOOK_USERNAME: webhookUsername,
+    WEBHOOK_PASSWORD: webhookPassword
   };
 }
 

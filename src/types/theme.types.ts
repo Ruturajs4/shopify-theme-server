@@ -1,6 +1,11 @@
 // Request Types
+export interface ThemeListRequest {
+  webhook_url: string;
+}
+
 export interface ThemeDownloadRequest {
   theme_id: string;
+  webhook_url: string;
 }
 
 // Response Types

@@ -3,7 +3,9 @@ import axios from 'axios';
 import logger from '../utils/logger';
 import { config } from '../config/environment';
 import { ShopifyService } from '../services/shopify.service';
+import { BasicAuthService } from '../services/auth.service';
 import {
+  ThemeListRequest,
   ThemeDownloadRequest,
   StandardAPIResponse,
   ThemeListWebhookPayload,
@@ -11,8 +13,9 @@ import {
 } from '../types/theme.types';
 
 const router = Router();
+const authService = new BasicAuthService();
 
-async function fetchAndSendThemes(): Promise<void> {
+async function fetchAndSendThemes(webhookUrl: string): Promise<void> {
   const shopifyService = new ShopifyService();
 
   try {
@@ -23,7 +26,11 @@ async function fetchAndSendThemes(): Promise<void> {
       themes
     };
 
-    await axios.post(config.WEBHOOK_URL, payload, { timeout: 10000 });
+    const fullWebhookUrl = `${webhookUrl}/theme/${config.SESSION_ID}`;
+    await axios.post(fullWebhookUrl, payload, {
+      timeout: 10000,
+      headers: authService.getAuthHeaders()
+    });
     logger.info(`Sent ${themes.length} themes to webhook`);
 
   } catch (error: any) {
@@ -36,14 +43,18 @@ async function fetchAndSendThemes(): Promise<void> {
     };
 
     try {
-      await axios.post(config.WEBHOOK_URL, errorPayload, { timeout: 10000 });
+      const fullWebhookUrl = `${webhookUrl}/theme/${config.SESSION_ID}`;
+      await axios.post(fullWebhookUrl, errorPayload, {
+        timeout: 10000,
+        headers: authService.getAuthHeaders()
+      });
     } catch (webhookError: any) {
       logger.error(`Webhook error: ${webhookError.message}`);
     }
   }
 }
 
-async function fetchAndDownloadTheme(themeId: string): Promise<void> {
+async function fetchAndDownloadTheme(themeId: string, webhookUrl: string): Promise<void> {
   const shopifyService = new ShopifyService();
 
   try {
@@ -54,7 +65,11 @@ async function fetchAndDownloadTheme(themeId: string): Promise<void> {
       theme_id: newThemeId
     };
 
-    await axios.post(config.WEBHOOK_URL, payload, { timeout: 10000 });
+    const fullWebhookUrl = `${webhookUrl}/theme/${config.SESSION_ID}`;
+    await axios.post(fullWebhookUrl, payload, {
+      timeout: 10000,
+      headers: authService.getAuthHeaders()
+    });
     logger.info(`Theme ${newThemeId} started successfully.`);
 
   } catch (error: any) {
@@ -66,18 +81,24 @@ async function fetchAndDownloadTheme(themeId: string): Promise<void> {
     };
 
     try {
-      await axios.post(config.WEBHOOK_URL, errorPayload, { timeout: 10000 });
+      const fullWebhookUrl = `${webhookUrl}/theme/${config.SESSION_ID}`;
+      await axios.post(fullWebhookUrl, errorPayload, {
+        timeout: 10000,
+        headers: authService.getAuthHeaders()
+      });
     } catch (webhookError: any) {
       logger.error(`Webhook error: ${webhookError.message}`);
     }
   }
 }
 
-router.get('/themes/list', (_req: Request, res: Response) => {
+router.post('/themes/list', (req: Request, res: Response) => {
+  const request: ThemeListRequest = req.body;
+
   logger.info(`List themes request for ${config.SHOPIFY_STORE_URL}`);
 
   // Trigger background task
-  fetchAndSendThemes();
+  fetchAndSendThemes(request.webhook_url);
 
   const response: StandardAPIResponse = {
     success: true,
@@ -93,7 +114,7 @@ router.post('/themes/download', (req: Request, res: Response) => {
   logger.info(`Download theme ${request.theme_id} from ${config.SHOPIFY_STORE_URL}`);
 
   // Trigger background task (don't await)
-  fetchAndDownloadTheme(request.theme_id);
+  fetchAndDownloadTheme(request.theme_id, request.webhook_url);
 
   const response: StandardAPIResponse = {
     success: true,

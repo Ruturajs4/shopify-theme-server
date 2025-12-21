@@ -5,39 +5,74 @@ dotenv.config();
 interface Config {
   THEME_DOWNLOAD_PATH: string;
   PORT: number;
-  STORE_NAME: string;
-  STORE_PASSWORD: string;
+  SHOPIFY_STORE_URL: string;
+  SHOPIFY_THEME_PASSWORD: string;
+  SHOPIFY_STORE_PASSWORD: string;
+  SESSION_ID: string;
   WEBHOOK_URL: string;
+  THEME_PULL_MAX_RETRIES: number;
+  THEME_PULL_RETRY_DELAY_SECONDS: number;
+  THEME_DUPLICATE_WAIT_SECONDS: number;
 }
 
 function validateEnvironment(): Config {
   const themeDownloadPath = process.env.THEME_DOWNLOAD_PATH;
-  const storeName = process.env.STORE_NAME;
-  const storePassword = process.env.STORE_PASSWORD;
+  const storeName = process.env.SHOPIFY_STORE_URL;
+  const shopifyThemePassword = process.env.SHOPIFY_THEME_PASSWORD;
+  const shopifyStorePassword = process.env.SHOPIFY_STORE_PASSWORD;
+  const sessionId = process.env.SESSION_ID;
   const webhookUrl = process.env.WEBHOOK_URL;
+  const themePullMaxRetries = process.env.THEME_PULL_MAX_RETRIES;
+  const themePullRetryDelaySeconds = process.env.THEME_PULL_RETRY_DELAY_SECONDS;
+  const themeDuplicateWaitSeconds = process.env.THEME_DUPLICATE_WAIT_SECONDS;
 
   if (!themeDownloadPath) {
     throw new Error('THEME_DOWNLOAD_PATH environment variable is required');
   }
 
   if (!storeName) {
-    throw new Error('STORE_NAME environment variable is required');
+    throw new Error('SHOPIFY_STORE_URL environment variable is required');
   }
 
-  if (!storePassword) {
-    throw new Error('STORE_PASSWORD environment variable is required');
+  if (!shopifyThemePassword) {
+    throw new Error('SHOPIFY_THEME_PASSWORD environment variable is required');
+  }
+
+  if (!shopifyStorePassword) {
+    throw new Error('SHOPIFY_STORE_PASSWORD environment variable is required');
+  }
+
+  if (!sessionId) {
+    throw new Error('SESSION_ID environment variable is required');
   }
 
   if (!webhookUrl) {
     throw new Error('WEBHOOK_URL environment variable is required');
   }
 
+  if (!themePullMaxRetries) {
+    throw new Error('THEME_PULL_MAX_RETRIES environment variable is required');
+  }
+
+  if (!themePullRetryDelaySeconds) {
+    throw new Error('THEME_PULL_RETRY_DELAY_SECONDS environment variable is required');
+  }
+
+  if (!themeDuplicateWaitSeconds) {
+    throw new Error('THEME_DUPLICATE_WAIT_SECONDS environment variable is required');
+  }
+
   return {
     THEME_DOWNLOAD_PATH: themeDownloadPath,
     PORT: parseInt(process.env.PORT || '8000', 10),
-    STORE_NAME: storeName,
-    STORE_PASSWORD: storePassword,
-    WEBHOOK_URL: webhookUrl
+    SHOPIFY_STORE_URL: storeName,
+    SHOPIFY_THEME_PASSWORD: shopifyThemePassword,
+    SHOPIFY_STORE_PASSWORD: shopifyStorePassword,
+    SESSION_ID: sessionId,
+    WEBHOOK_URL: webhookUrl,
+    THEME_PULL_MAX_RETRIES: parseInt(themePullMaxRetries, 10),
+    THEME_PULL_RETRY_DELAY_SECONDS: parseInt(themePullRetryDelaySeconds, 10),
+    THEME_DUPLICATE_WAIT_SECONDS: parseInt(themeDuplicateWaitSeconds, 10)
   };
 }
 

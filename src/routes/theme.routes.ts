@@ -12,7 +12,6 @@ import {
 
 const router = Router();
 
-// Background task for listing themes
 async function fetchAndSendThemes(): Promise<void> {
   const shopifyService = new ShopifyService();
 
@@ -44,28 +43,25 @@ async function fetchAndSendThemes(): Promise<void> {
   }
 }
 
-// Background task for downloading theme
-async function fetchAndDownloadTheme(themeName: string): Promise<void> {
+async function fetchAndDownloadTheme(themeId: string): Promise<void> {
   const shopifyService = new ShopifyService();
 
   try {
-    const downloadPath = await shopifyService.downloadTheme(themeName);
+    const newThemeId = await shopifyService.downloadTheme(themeId);
 
     const payload: ThemeDownloadWebhookPayload = {
       success: true,
-      theme_name: themeName,
-      download_path: downloadPath
+      theme_id: newThemeId
     };
 
     await axios.post(config.WEBHOOK_URL, payload, { timeout: 10000 });
-    logger.info(`Theme '${themeName}' downloaded successfully to ${downloadPath}`);
+    logger.info(`Theme ${newThemeId} started successfully.`);
 
   } catch (error: any) {
     logger.error(`Error downloading theme: ${error.message}`);
 
     const errorPayload: ThemeDownloadWebhookPayload = {
       success: false,
-      theme_name: themeName,
       error: error.message
     };
 
@@ -78,9 +74,9 @@ async function fetchAndDownloadTheme(themeName: string): Promise<void> {
 }
 
 router.get('/themes/list', (_req: Request, res: Response) => {
-  logger.info(`List themes request for ${config.STORE_NAME}`);
+  logger.info(`List themes request for ${config.SHOPIFY_STORE_URL}`);
 
-  // Trigger background task (don't await)
+  // Trigger background task
   fetchAndSendThemes();
 
   const response: StandardAPIResponse = {
@@ -94,14 +90,14 @@ router.get('/themes/list', (_req: Request, res: Response) => {
 router.post('/themes/download', (req: Request, res: Response) => {
   const request: ThemeDownloadRequest = req.body;
 
-  logger.info(`Download theme '${request.theme_name}' from ${config.STORE_NAME}`);
+  logger.info(`Download theme ${request.theme_id} from ${config.SHOPIFY_STORE_URL}`);
 
   // Trigger background task (don't await)
-  fetchAndDownloadTheme(request.theme_name);
+  fetchAndDownloadTheme(request.theme_id);
 
   const response: StandardAPIResponse = {
     success: true,
-    message: `Theme download request for '${request.theme_name}' accepted. Results will be sent to webhook.`
+    message: `Theme download request for ${request.theme_id} accepted. Results will be sent to webhook.`
   };
 
   res.json(response);

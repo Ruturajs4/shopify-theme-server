@@ -1,6 +1,6 @@
 // Request Types
 export interface ThemeDownloadRequest {
-  theme_name: string;
+  theme_id: string;
 }
 
 // Response Types
@@ -25,7 +25,6 @@ export interface ThemeListWebhookPayload {
 
 export interface ThemeDownloadWebhookPayload {
   success: boolean;
-  theme_name: string;
-  download_path?: string;
+  theme_id?: string;
   error?: string;
 }

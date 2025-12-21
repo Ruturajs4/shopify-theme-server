@@ -23,11 +23,9 @@ function validateEnvironment(): Config {
   const shopifyThemePassword = process.env.SHOPIFY_THEME_PASSWORD;
   const shopifyStorePassword = process.env.SHOPIFY_STORE_PASSWORD;
   const sessionId = process.env.SESSION_ID;
-  const themePullMaxRetries = process.env.THEME_PULL_MAX_RETRIES;
-  const themePullRetryDelaySeconds = process.env.THEME_PULL_RETRY_DELAY_SECONDS;
-  const themeDuplicateWaitSeconds = process.env.THEME_DUPLICATE_WAIT_SECONDS;
-  const webhookUsername = process.env.WEBHOOK_USERNAME;
-  const webhookPassword = process.env.WEBHOOK_PASSWORD;
+  const webhookUsername = process.env.SERVICE_USERNAME;
+  
+  const webhookPassword = process.env.SERVICE_PASSWORD;
   const webhookUrl = process.env.WEBHOOK_URL;
 
   if (!themeDownloadPath) {
@@ -50,18 +48,6 @@ function validateEnvironment(): Config {
     throw new Error('SESSION_ID environment variable is required');
   }
 
-  if (!themePullMaxRetries) {
-    throw new Error('THEME_PULL_MAX_RETRIES environment variable is required');
-  }
-
-  if (!themePullRetryDelaySeconds) {
-    throw new Error('THEME_PULL_RETRY_DELAY_SECONDS environment variable is required');
-  }
-
-  if (!themeDuplicateWaitSeconds) {
-    throw new Error('THEME_DUPLICATE_WAIT_SECONDS environment variable is required');
-  }
-
   if (!webhookUsername) {
     throw new Error('WEBHOOK_USERNAME environment variable is required');
   }
@@ -81,9 +67,9 @@ function validateEnvironment(): Config {
     SHOPIFY_THEME_PASSWORD: shopifyThemePassword,
     SHOPIFY_STORE_PASSWORD: shopifyStorePassword,
     SESSION_ID: sessionId,
-    THEME_PULL_MAX_RETRIES: parseInt(themePullMaxRetries, 10),
-    THEME_PULL_RETRY_DELAY_SECONDS: parseInt(themePullRetryDelaySeconds, 10),
-    THEME_DUPLICATE_WAIT_SECONDS: parseInt(themeDuplicateWaitSeconds, 10),
+    THEME_PULL_MAX_RETRIES:  3,
+    THEME_PULL_RETRY_DELAY_SECONDS:  10,
+    THEME_DUPLICATE_WAIT_SECONDS: 10,
     WEBHOOK_USERNAME: webhookUsername,
     WEBHOOK_PASSWORD: webhookPassword,
     WEBHOOK_URL: webhookUrl

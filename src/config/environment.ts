@@ -75,7 +75,7 @@ function validateEnvironment(): Config {
   }
 
   return {
-    THEME_DOWNLOAD_PATH: themeDownloadPath,
+    THEME_DOWNLOAD_PATH: themeDownloadPath || './themes',
     PORT: parseInt(process.env.PORT || '8000', 10),
     SHOPIFY_STORE_URL: storeName,
     SHOPIFY_THEME_PASSWORD: shopifyThemePassword,

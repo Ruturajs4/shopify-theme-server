@@ -14,6 +14,7 @@ interface Config {
   THEME_DUPLICATE_WAIT_SECONDS: number;
   WEBHOOK_USERNAME: string;
   WEBHOOK_PASSWORD: string;
+  WEBHOOK_URL: string;
 }
 
 function validateEnvironment(): Config {
@@ -27,6 +28,7 @@ function validateEnvironment(): Config {
   const themeDuplicateWaitSeconds = process.env.THEME_DUPLICATE_WAIT_SECONDS;
   const webhookUsername = process.env.WEBHOOK_USERNAME;
   const webhookPassword = process.env.WEBHOOK_PASSWORD;
+  const webhookUrl = process.env.WEBHOOK_URL;
 
   if (!themeDownloadPath) {
     throw new Error('THEME_DOWNLOAD_PATH environment variable is required');
@@ -68,6 +70,10 @@ function validateEnvironment(): Config {
     throw new Error('WEBHOOK_PASSWORD environment variable is required');
   }
 
+  if (!webhookUrl) {
+    throw new Error('WEBHOOK_URL environment variable is required');
+  }
+
   return {
     THEME_DOWNLOAD_PATH: themeDownloadPath,
     PORT: parseInt(process.env.PORT || '8000', 10),
@@ -79,7 +85,8 @@ function validateEnvironment(): Config {
     THEME_PULL_RETRY_DELAY_SECONDS: parseInt(themePullRetryDelaySeconds, 10),
     THEME_DUPLICATE_WAIT_SECONDS: parseInt(themeDuplicateWaitSeconds, 10),
     WEBHOOK_USERNAME: webhookUsername,
-    WEBHOOK_PASSWORD: webhookPassword
+    WEBHOOK_PASSWORD: webhookPassword,
+    WEBHOOK_URL: webhookUrl
   };
 }
 

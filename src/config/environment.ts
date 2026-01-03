@@ -15,6 +15,7 @@ interface Config {
   WEBHOOK_USERNAME: string;
   WEBHOOK_PASSWORD: string;
   WEBHOOK_URL: string;
+  CODEX_MODEL: string;
 }
 
 function validateEnvironment(): Config {
@@ -72,7 +73,8 @@ function validateEnvironment(): Config {
     THEME_DUPLICATE_WAIT_SECONDS: 10,
     WEBHOOK_USERNAME: webhookUsername,
     WEBHOOK_PASSWORD: webhookPassword,
-    WEBHOOK_URL: webhookUrl
+    WEBHOOK_URL: webhookUrl,
+    CODEX_MODEL: process.env.CODEX_MODEL || 'gpt-5.1-codex-max'
   };
 }
 

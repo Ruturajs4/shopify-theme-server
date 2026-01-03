@@ -5,10 +5,14 @@ import * as fs from 'fs/promises';
 import logger from '../utils/logger';
 import { config } from '../config/environment';
 import { ThemeInfo } from '../types/theme.types';
+import codexService from './codex.instance';
+import type CodexService from './codex.service';
 
 const execAsync = promisify(exec);
 
 export class ShopifyService {
+  constructor() {
+  }
   async listThemes(): Promise<ThemeInfo[]> {
     logger.info(`Listing themes for store: ${config.SHOPIFY_STORE_URL}`);
 
@@ -131,10 +135,32 @@ export class ShopifyService {
     logger.info(`Waiting ${config.THEME_DUPLICATE_WAIT_SECONDS} seconds for theme duplication to complete...`);
     await new Promise(resolve => setTimeout(resolve, config.THEME_DUPLICATE_WAIT_SECONDS * 1000));
 
-    await this.pullTheme(newThemeId);
+    const themePath = await this.pullTheme(newThemeId);
+
+    // Setup Codex environment for the downloaded theme
+    logger.info('Setting up Codex environment for theme...');
+    const codexEnv = await codexService.setupEnvironment(
+      themePath,
+      config.CODEX_MODEL
+    );
+
+    logger.info('Codex environment setup complete', {
+      envId: codexEnv.envId,
+      model: codexEnv.model,
+      yoloMode: codexEnv.yoloMode,
+    });
+
     await this.runThemeDev(newThemeId);
 
     logger.info(`Download workflow completed. New theme ID: ${newThemeId}`);
     return newThemeId;
+  }
+
+  /**
+   * Get the CodexService instance
+   * @returns CodexService instance
+   */
+  getCodexService(): CodexService {
+    return codexService;
   }
 }

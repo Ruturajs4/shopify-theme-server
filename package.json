@@ -7,7 +7,13 @@
     "build": "tsc",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "start": "node dist/index.js",
-    "lint": "eslint src --ext .ts"
+    "lint": "eslint src --ext .ts",
+    "codex:example": "ts-node src/examples/codex-usage.example.ts",
+    "codex:test": "ts-node src/examples/codex-test.ts",
+    "codex:setup-demo": "ts-node src/examples/setup-environment.example.ts",
+    "chat:examples": "ts-node src/examples/chat-endpoints.example.ts",
+    "test:background": "ts-node src/examples/background-test.example.ts",
+    "bootstrap": "ts-node src/bootstrap.ts"
   },
   "keywords": [
     "shopify",
@@ -17,6 +23,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@openai/codex-sdk": "^0.77.0",
     "axios": "^1.6.0",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",

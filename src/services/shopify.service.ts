@@ -127,7 +127,7 @@ export class ShopifyService {
     logger.info(`Theme dev server started for theme ${themeId}`);
   }
 
-  async downloadTheme(themeId: string): Promise<string> {
+  async downloadTheme(themeId: string): Promise<{ themeId: string; envId: string }> {
     logger.info(`Starting download workflow for theme ${themeId}`);
 
     const newThemeId = await this.duplicateTheme(themeId, config.SESSION_ID);
@@ -153,7 +153,7 @@ export class ShopifyService {
     await this.runThemeDev(newThemeId);
 
     logger.info(`Download workflow completed. New theme ID: ${newThemeId}`);
-    return newThemeId;
+    return { themeId: newThemeId, envId: codexEnv.envId };
   }
 
   /**

@@ -26,6 +26,7 @@ export interface ThemeListWebhookPayload {
 export interface ThemeDownloadWebhookPayload {
   success: boolean;
   theme_id?: string;
+  env_id?: string;
   error?: string;
 }
 

@@ -17,11 +17,12 @@ async function fetchAndDownloadTheme(themeId: string): Promise<void> {
   const shopifyService = new ShopifyService();
 
   try {
-    const newThemeId = await shopifyService.downloadTheme(themeId);
+    const { themeId: newThemeId, envId } = await shopifyService.downloadTheme(themeId);
 
     const payload: ThemeDownloadWebhookPayload = {
       success: true,
-      theme_id: newThemeId
+      theme_id: newThemeId,
+      env_id: envId
     };
 
     const fullWebhookUrl = `${config.WEBHOOK_URL}/theme/${config.SESSION_ID}`;

@@ -131,29 +131,27 @@ password = "${config.SHOPIFY_THEME_PASSWORD}"
       throw new Error(`Theme directory not found: ${themePath}`);
     }
 
+    // Create a wrapper script that uses script command for pseudo-TTY
+    const wrapperScriptPath = path.join(themePath, 'run-theme-dev.sh');
+    const wrapperScript = `#!/bin/bash
+export SHOPIFY_CLI_THEME_TOKEN="${config.SHOPIFY_THEME_PASSWORD}"
+export SHOPIFY_FLAG_STORE="${config.SHOPIFY_STORE_URL}"
+export SHOPIFY_CLI_NO_ANALYTICS=1
+
+# Use script to create a pseudo-TTY and run shopify theme dev
+script -q -c "shopify theme dev --path ${themePath} --environment production --port 9292" /dev/null
+`;
+
+    await fs.writeFile(wrapperScriptPath, wrapperScript, 'utf-8');
+    await execAsync(`chmod +x ${wrapperScriptPath}`);
+
+    logger.info(`Created wrapper script at ${wrapperScriptPath}`);
     logger.info(`Running shopify theme dev with path: ${themePath}`);
 
-    const shopifyProcess = spawn('shopify', [
-      'theme',
-      'dev',
-      '--path',
-      themePath,
-      '--environment',
-      'production',
-      '--port',
-      '9292',
-      '--force'
-    ], {
+    const shopifyProcess = spawn('bash', [wrapperScriptPath], {
       stdio: 'inherit',
       shell: false,
-      env: {
-        ...process.env,
-        SHOPIFY_CLI_THEME_TOKEN: config.SHOPIFY_THEME_PASSWORD,
-        SHOPIFY_FLAG_STORE: config.SHOPIFY_STORE_URL,
-        SHOPIFY_CLI_TTY: '0',
-        SHOPIFY_CLI_NO_ANALYTICS: '1',
-        CI: '1',
-      }
+      cwd: themePath,
     });
 
     shopifyProcess.on('error', (error) => {

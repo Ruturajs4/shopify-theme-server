@@ -1,4 +1,5 @@
 import winston from 'winston';
+import path from 'path';
 
 const logger = winston.createLogger({
   level: 'info',
@@ -16,6 +17,10 @@ const logger = winston.createLogger({
           return `[${level}]: ${message}`;
         })
       )
+    }),
+    new winston.transports.File({
+      filename: path.join(process.cwd(), 'start.log'),
+      options: { flags: 'a' }
     })
   ]
 });

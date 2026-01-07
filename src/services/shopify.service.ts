@@ -132,8 +132,7 @@ export class ShopifyService {
       '--password',
       config.SHOPIFY_THEME_PASSWORD,
       '--port',
-      '9292',
-      '--no-open'
+      '9292'
     ], {
       stdio: 'inherit',
       shell: false,
@@ -141,6 +140,7 @@ export class ShopifyService {
         ...process.env,
         SHOPIFY_FLAG_PASSWORD: config.SHOPIFY_THEME_PASSWORD,
         SHOPIFY_CLI_NO_ANALYTICS: '1',
+        BROWSER: 'none',
       }
     });
 

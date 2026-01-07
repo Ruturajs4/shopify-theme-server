@@ -44,7 +44,6 @@ Create a `.env` file:
 # Shopify Configuration
 SHOPIFY_STORE_URL=your-store.myshopify.com
 SHOPIFY_THEME_PASSWORD=shpat_xxxxx
-SHOPIFY_STORE_PASSWORD=xxxxx
 
 # Session & Webhook
 SESSION_ID=your-session-id
@@ -339,7 +338,6 @@ Track multiple theme environments:
 |----------|-------------|---------|
 | `SHOPIFY_STORE_URL` | Your Shopify store URL | `store.myshopify.com` |
 | `SHOPIFY_THEME_PASSWORD` | Theme access password | `shpat_xxxxx` |
-| `SHOPIFY_STORE_PASSWORD` | Store password | `xxxxx` |
 | `SESSION_ID` | Unique session identifier | `session-123` |
 | `WEBHOOK_URL` | Webhook notification URL | `https://webhook.com` |
 | `SERVICE_USERNAME` | Webhook auth username | `username` |

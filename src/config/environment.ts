@@ -7,7 +7,6 @@ interface Config {
   PORT: number;
   SHOPIFY_STORE_URL: string;
   SHOPIFY_THEME_PASSWORD: string;
-  SHOPIFY_STORE_PASSWORD: string;
   SESSION_ID: string;
   THEME_PULL_MAX_RETRIES: number;
   THEME_PULL_RETRY_DELAY_SECONDS: number;
@@ -22,7 +21,6 @@ function validateEnvironment(): Config {
   const themeDownloadPath = process.env.THEME_DOWNLOAD_PATH || './themes';
   const storeName = process.env.SHOPIFY_STORE_URL;
   const shopifyThemePassword = process.env.SHOPIFY_THEME_PASSWORD;
-  const shopifyStorePassword = process.env.SHOPIFY_STORE_PASSWORD;
   const sessionId = process.env.SESSION_ID;
   const webhookUsername = process.env.SERVICE_USERNAME;
   
@@ -39,10 +37,6 @@ function validateEnvironment(): Config {
 
   if (!shopifyThemePassword) {
     throw new Error('SHOPIFY_THEME_PASSWORD environment variable is required');
-  }
-
-  if (!shopifyStorePassword) {
-    throw new Error('SHOPIFY_STORE_PASSWORD environment variable is required');
   }
 
   if (!sessionId) {
@@ -66,7 +60,6 @@ function validateEnvironment(): Config {
     PORT: parseInt(process.env.PORT || '8000', 10),
     SHOPIFY_STORE_URL: storeName,
     SHOPIFY_THEME_PASSWORD: shopifyThemePassword,
-    SHOPIFY_STORE_PASSWORD: shopifyStorePassword,
     SESSION_ID: sessionId,
     THEME_PULL_MAX_RETRIES:  3,
     THEME_PULL_RETRY_DELAY_SECONDS:  10,

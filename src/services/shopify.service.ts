@@ -113,15 +113,36 @@ export class ShopifyService {
     const downloadBase = path.resolve(config.THEME_DOWNLOAD_PATH);
     const themePath = path.join(downloadBase, themeId);
 
-    const cmd = `shopify theme dev --path=${themePath} --store=${config.SHOPIFY_STORE_URL} --password=${config.SHOPIFY_THEME_PASSWORD} --store-password=${config.SHOPIFY_STORE_PASSWORD} --force`;
+    // Verify directory exists
+    try {
+      await fs.access(themePath);
+      const files = await fs.readdir(themePath);
+      logger.info(`Theme directory exists with ${files.length} files`);
+    } catch (error: any) {
+      throw new Error(`Theme directory not found: ${themePath}`);
+    }
 
-    exec(cmd, (error, stdout, stderr) => {
-      if (error) {
-        logger.error(`Theme dev error: ${error.message}`);
-        return;
-      }
-      if (stdout) logger.info(`Theme dev: ${stdout}`);
-      if (stderr) logger.error(`Theme dev stderr: ${stderr}`);
+    logger.info(`Running shopify theme dev with path: ${themePath}`);
+
+    const shopifyProcess = spawn('shopify', [
+      'theme',
+      'dev',
+      '--path',
+      themePath,
+      '--password',
+      config.SHOPIFY_THEME_PASSWORD,
+      '--open'
+    ], {
+      stdio: 'inherit',
+      shell: false
+    });
+
+    shopifyProcess.on('error', (error) => {
+      logger.error(`Theme dev error: ${error.message}`);
+    });
+
+    shopifyProcess.on('exit', (code) => {
+      logger.info(`Theme dev process exited with code ${code}`);
     });
 
     logger.info(`Theme dev server started for theme ${themeId}`);

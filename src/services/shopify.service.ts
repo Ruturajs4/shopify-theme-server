@@ -133,10 +133,15 @@ export class ShopifyService {
       config.SHOPIFY_THEME_PASSWORD,
       '--port',
       '9292',
-      '--open'
+      '--no-open'
     ], {
       stdio: 'inherit',
-      shell: false
+      shell: false,
+      env: {
+        ...process.env,
+        SHOPIFY_FLAG_PASSWORD: config.SHOPIFY_THEME_PASSWORD,
+        SHOPIFY_CLI_NO_ANALYTICS: '1',
+      }
     });
 
     shopifyProcess.on('error', (error) => {

@@ -20,7 +20,12 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-echo "Bootstrap completed successfully. Starting server..."
+echo "Bootstrap completed successfully. Starting servers..."
 
-# Start the server
+# Start the proxy server in the background
+echo "Starting proxy server on port 3005..."
+node dist/proxy-server.js &
+
+# Start the main API server
+echo "Starting main API server..."
 node dist/index.js

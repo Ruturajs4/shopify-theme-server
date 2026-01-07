@@ -131,6 +131,8 @@ export class ShopifyService {
       themePath,
       '--password',
       config.SHOPIFY_THEME_PASSWORD,
+      '--port',
+      '9292',
       '--open'
     ], {
       stdio: 'inherit',

@@ -98,7 +98,7 @@ export class ShopifyService {
       if (files.length > 0) {
         // Create shopify.theme.toml for non-interactive theme dev
         const tomlPath = path.join(themePath, 'shopify.theme.toml');
-        const tomlContent = `[environments.default]
+        const tomlContent = `[environments.production]
 store = "${config.SHOPIFY_STORE_URL}"
 password = "${config.SHOPIFY_THEME_PASSWORD}"
 `;
@@ -138,8 +138,11 @@ password = "${config.SHOPIFY_THEME_PASSWORD}"
       'dev',
       '--path',
       themePath,
+      '--environment',
+      'production',
       '--port',
-      '9292'
+      '9292',
+      '--force'
     ], {
       stdio: 'inherit',
       shell: false,
@@ -147,11 +150,9 @@ password = "${config.SHOPIFY_THEME_PASSWORD}"
         ...process.env,
         SHOPIFY_CLI_THEME_TOKEN: config.SHOPIFY_THEME_PASSWORD,
         SHOPIFY_FLAG_STORE: config.SHOPIFY_STORE_URL,
-        SHOPIFY_FLAG_FORCE: '1',
         SHOPIFY_CLI_TTY: '0',
         SHOPIFY_CLI_NO_ANALYTICS: '1',
         CI: '1',
-        BROWSER: 'none',
       }
     });
 

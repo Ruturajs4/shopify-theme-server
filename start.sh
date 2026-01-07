@@ -1,4 +1,4 @@
-s#!/bin/bash
+#!/bin/bash
 
 echo "Starting Shopify Theme Manager..."
 

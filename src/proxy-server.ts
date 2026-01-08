@@ -1,10 +1,20 @@
 import express from 'express';
 import axios from 'axios';
 import logger from './utils/logger';
+import { Agent } from 'http';
 
 const app = express();
 const PROXY_PORT = 3005;
 const SHOPIFY_DEV_PORT = 9292; // Default Shopify theme dev port
+
+// Create HTTP agent with keep-alive for better connection handling
+const httpAgent = new Agent({
+  keepAlive: true,
+  keepAliveMsecs: 1000,
+  maxSockets: 50,
+  maxFreeSockets: 10,
+  timeout: 60000,
+});
 
 // Middleware to handle all requests
 app.use('*', async (req, res) => {
@@ -25,6 +35,10 @@ app.use('*', async (req, res) => {
       responseType: 'arraybuffer',
       validateStatus: () => true, // Accept all status codes
       maxRedirects: 0, // Don't follow redirects automatically
+      timeout: 30000, // 30 second timeout
+      httpAgent: httpAgent,
+      maxContentLength: Infinity,
+      maxBodyLength: Infinity,
     });
 
     // Remove headers that prevent iframe embedding
@@ -52,6 +66,10 @@ app.use('*', async (req, res) => {
 
     if (error.code === 'ECONNREFUSED') {
       res.status(503).send('Shopify dev server is not running on port ' + SHOPIFY_DEV_PORT);
+    } else if (error.code === 'ECONNRESET' || error.message.includes('socket hang up')) {
+      res.status(502).send('Connection to Shopify dev server was reset');
+    } else if (error.code === 'ETIMEDOUT' || error.message.includes('timeout')) {
+      res.status(504).send('Request to Shopify dev server timed out');
     } else {
       res.status(500).send('Proxy error: ' + error.message);
     }

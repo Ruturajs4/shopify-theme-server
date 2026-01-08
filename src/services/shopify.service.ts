@@ -130,7 +130,7 @@ export SHOPIFY_CLI_NO_ANALYTICS=1
 export CI=1
 
 # Use script to create a pseudo-TTY and run shopify theme dev
-script -q -c "shopify theme dev --path ${themePath} --password ${config.SHOPIFY_THEME_PASSWORD} --port 9292 --force" /dev/null
+script -q -c "shopify theme dev --path ${themePath} --password ${config.SHOPIFY_THEME_PASSWORD} --port 9292 --store-password neecra" /dev/null
 `;
 
     await fs.writeFile(wrapperScriptPath, wrapperScript, 'utf-8');

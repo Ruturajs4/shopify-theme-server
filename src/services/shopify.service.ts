@@ -96,15 +96,6 @@ export class ShopifyService {
       logger.info(`Files in directory after pull: ${files.length} files`);
 
       if (files.length > 0) {
-        // Create shopify.theme.toml for non-interactive theme dev
-        const tomlPath = path.join(themePath, 'shopify.theme.toml');
-        const tomlContent = `[environments.production]
-store = "${config.SHOPIFY_STORE_URL}"
-password = "${config.SHOPIFY_THEME_PASSWORD}"
-`;
-        await fs.writeFile(tomlPath, tomlContent, 'utf-8');
-        logger.info(`Created shopify.theme.toml in ${themePath}`);
-
         logger.info(`Theme pulled successfully to: ${themePath}`);
         return themePath;
       }
@@ -135,11 +126,11 @@ password = "${config.SHOPIFY_THEME_PASSWORD}"
     const wrapperScriptPath = path.join(themePath, 'run-theme-dev.sh');
     const wrapperScript = `#!/bin/bash
 export SHOPIFY_CLI_THEME_TOKEN="${config.SHOPIFY_THEME_PASSWORD}"
-export SHOPIFY_FLAG_STORE="${config.SHOPIFY_STORE_URL}"
 export SHOPIFY_CLI_NO_ANALYTICS=1
+export CI=1
 
 # Use script to create a pseudo-TTY and run shopify theme dev
-script -q -c "shopify theme dev --path ${themePath} --environment production --port 9292" /dev/null
+script -q -c "shopify theme dev --path ${themePath} --password ${config.SHOPIFY_THEME_PASSWORD} --port 9292" /dev/null
 `;
 
     await fs.writeFile(wrapperScriptPath, wrapperScript, 'utf-8');
